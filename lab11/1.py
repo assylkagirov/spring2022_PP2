@@ -1,16 +1,12 @@
 import psycopg2
 from psycopg2 import Error
 import csv
+from config import config
 
 try:
     
-    connection = psycopg2.connect(user="postgres",                             
-                                  password="joker123",
-                                  host="127.0.0.1",
-                                  port="5432",
-                                  database="postgres")
-
- 
+    conn = config()
+    connection = psycopg2.connect(**conn)
     cursor = connection.cursor()
     
     print("Для csv введите 1. Для собственного ввода введите 2. Для обновление введите 3. Для получение данных из таблицы введите 4. Для удаления данных введите 5. А для offset или limit введите 6")
