@@ -1,7 +1,7 @@
 import pygame, random, time
 import psycopg2
 from psycopg2 import Error
-import csv
+
 
 pygame.init()
 
@@ -23,13 +23,12 @@ try:
                                   database="postgres")
 
     cursor = connection.cursor()
+    
     print("Enter username: ")
-    username = input()
-    command = "SELECT * FROM postgres WHERE user = %s"
-    cursor.execute(command, (username,))
-    data = cursor.fetchall()
-    if data:
-        snake_block, snake_speed, level 
+    username = str(input())
+    cursor.execute(f'''INSERT INTO game (user, user_level) VALUES('{username}', 0)''')
+    connection.commit()
+        
 except (Exception, Error) as error:
     print("Ошибка при работе с PostgreSQL", error)
 finally:
@@ -51,6 +50,7 @@ def display_score(score, level):
         value = score_font.render("Level: " + str(level) + " Your score: " + str(score), True, yellow) #level and score counter
     dis.blit(value, [0,0])
 
+
 def draw_snake(snake_block, snake_list):
     for item in snake_list:
         pygame.draw.rect(dis, black, [item[0], item[1], snake_block, snake_block])
@@ -71,6 +71,7 @@ def gameLoop():
     x1_change = 0
     y1_change = 0
     global snake_block, snake_speed, level, randomint, timeredfood, timer, timint
+    
     snake_list = []
     snake_length = 1
     #making food x and y first time
@@ -161,7 +162,7 @@ def gameLoop():
         draw_snake(snake_block, snake_list)
 
         display_score(snake_length - 1, level)
-   
+        
 
         pygame.display.update()
         
@@ -200,7 +201,8 @@ def gameLoop():
                 foody = round(random.randrange(0, dis_height) / 10.0) * 10.0
                 randomint = random.randint(0, 10) #random next food
         clock.tick(snake_speed)
-            
+    cursor.execute(f'''INSERT INTO game (user,user_level) VALUES('{username}', '{level}')''')
+    connection.commit()
     pygame.quit()
     quit()
 
